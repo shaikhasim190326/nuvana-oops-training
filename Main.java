@@ -1,3 +1,4 @@
+
 import java.util.Scanner;
 
 public class Main {
@@ -7,12 +8,13 @@ public class Main {
         Scanner sc = new Scanner(System.in);
 
         EmployeeDirectory directory = new EmployeeDirectory();
-
-        directory.addEmployee(new Employee(101, "Shabaz", "IT", "Java Developer", "shabaz@gmail.com"));
-        directory.addEmployee(new Employee(102, "Ali", "HR", "HR Executive", "ali@gmail.com"));
-        directory.addEmployee(new Employee(103, "Arkam", "IT", "Software Engineer", "arkam@gmail.com"));
-        directory.addEmployee(new Employee(104, "Raheem", "IT", "Java Developer", "raheem@gmail.com"));
-        directory.addEmployee(new Employee(105, "Aman", "HR", "Recruiter", "aman@gmail.com"));
+        SalaryCalculator calculator = new SalaryCalculator();
+        
+        directory.addEmployee(new Employee(101, "Shabaz","IT","Java developer","shabaz@gmail.com", 50000.6,4));
+        directory.addEmployee(new Employee(102, "Ali","IT","HR exclusive","ali@gmail.com", 64000.6,5));
+        directory.addEmployee(new Employee(103, "Arkam","IT","HR exclusive","arkam@gmail.com", 30000.6,8));
+        directory.addEmployee(new Employee(104, "Raheem","IT","Java developer","raheem@gmail.com", 45000.6,3));
+        directory.addEmployee(new Employee(105, "Asfan","IT","Java developer","asfan@gmail.com", 40000.6,2));
 
         int choice;
 
@@ -23,7 +25,8 @@ public class Main {
             System.out.println("2. Display Department Wise");
             System.out.println("3. Search Employee By ID");
             System.out.println("4. Search Employee By Name");
-            System.out.println("5. Exit");
+            System.out.println("5. Display salary slip ");
+            System.out.println("6. Exit");
             System.out.print("Enter Choice : ");
 
             choice = sc.nextInt();
@@ -53,8 +56,20 @@ public class Main {
                     directory.searchByPartialName(name);
                     break;
 
-                case 5:
-                    System.out.println("Thank You!");
+               case 5:
+                    System.out.print("Enter Employee ID : ");
+                    int salaryId = sc.nextInt();
+
+                Employee emp = directory.searchEmployeeObject(salaryId);
+
+                if (emp != null) {
+                calculator.displaySalarySlip(emp);
+                } else {
+                System.out.println("Employee Not Found");
+                }
+
+                    case 6:
+                    System.out.println("   Thank You  ");
                     break;
 
                 default:
@@ -62,7 +77,7 @@ public class Main {
 
             }
 
-        } while (choice != 5);
+        } while (choice != 6);
 
         sc.close();
     }
