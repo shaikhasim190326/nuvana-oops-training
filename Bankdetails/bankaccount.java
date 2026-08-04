@@ -3,8 +3,9 @@ public class bankaccount{
     private String accountHolderName;
     private String accountType;
     private double balance;
+   
 
-    public bankaccount(int accountNumber, String accountHolderName, String   accountType, double balance) {
+    public bankaccount(int accountNumber, String accountHolderName, String accountType, double balance) {
         this.accountNumber = accountNumber;
         this.accountHolderName = accountHolderName;
         this.accountType = accountType;
@@ -45,4 +46,5 @@ public class bankaccount{
         System.out.println("Account Type: " + accountType);
         System.out.println("Balance: $" + balance);
     }
+  
 }
