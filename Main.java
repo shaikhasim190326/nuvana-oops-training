@@ -10,7 +10,8 @@ public class Main {
         ArrayList<Student> students = new ArrayList<>();
 
         StudentServices service = new StudentServices();
-
+            
+       
         for (int i = 1; i <= 5; i++) {
 
             Student s = new Student();
@@ -18,8 +19,11 @@ public class Main {
             System.out.println("\nEnter Details of Student " + i);
 
             s.readDetails(sc);
-
+            s.setTotalLecture(100);
+            s.setAttendLectures(80);
+            s.setMedicalLeaveAproved(20);
             students.add(s);
+            
         }
 
         int classTotal = 0;
@@ -56,6 +60,10 @@ public class Main {
 
             if (s.science > highScience)
                 highScience = s.science;
+             double attendnce = service.calculateAttendncePersentage(s);
+        boolean eligible= service.isExamEligible(s);
+        service.displayAttendanceReport(s);
+
         }
 
         System.out.println("\nClass Average : " + (classTotal / (students.size() * 5.0)));
@@ -71,4 +79,10 @@ public class Main {
 
         sc.close();
     }
+
+    
+
+
+  
+
 }

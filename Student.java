@@ -13,6 +13,11 @@ public class Student {
     int urdu;
     int marathi;
     int science;
+     int totalLecture;
+     int attendLectures;
+     int medicalLeaveAproved;
+
+
 
     public void readDetails(Scanner sc) {
 
@@ -83,4 +88,33 @@ public class Student {
             return;
         }
     }
+
+      public int getTotalLecture() {
+        return totalLecture;
+    }
+
+    public int getAttendLectures() {
+        return attendLectures;
+    }
+
+    public int getMedicalLeaveAproved() {
+        return medicalLeaveAproved;
+    }
+
+    public void setTotalLecture(int totalLecture) {
+        this.totalLecture = totalLecture;
+    }
+
+    public void setAttendLectures(int attendLectures) {
+        this.attendLectures = attendLectures;
+    }
+
+    public void setMedicalLeaveAproved(int medicalLeaveAproved) {
+        this.medicalLeaveAproved = medicalLeaveAproved;
+    }
+    
+
+
+
+
 }

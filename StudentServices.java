@@ -58,4 +58,58 @@ public class StudentServices {
 
         System.out.println("-------------------------");
     }
+
+
+      public double  calculateAttendncePersentage(Student s){
+      int persent = s.getAttendLectures()+ s.getMedicalLeaveAproved();
+      double persentage = (persent*100.0) / s.getTotalLecture();
+      System.out.println("persentage "+ persentage  );
+       return persentage;
+
+
+      }
+           
+
+    
+
+      public boolean isExamEligible(Student s){
+        double attendnce = calculateAttendncePersentage(s);
+          
+        if(attendnce>=75){
+            return true;
+        }else{
+         
+         return false;
+
+
+
+         }
+      }
+      
+       public Student displayAttendanceReport(Student s){
+        
+         System.out.println(" ------- Attendance    Report  ------");
+         System.out.println(" Total Lectures:"+ s.getTotalLecture());
+          System.out.println(" Attend Lecture: "+s.getAttendLectures());
+         System.out.println("Medical Leave: "+ s.getMedicalLeaveAproved() );
+         
+        System.out.println("Attendence: "+ calculateAttendncePersentage(s));
+
+       if(isExamEligible(s)){
+         
+        System.out.println(" Exam status:        is Eligibale      ");
+
+       }else{
+
+        System.out.println("Exam status:      not Eligibale    ");
+
+       }
+
+       return s;
+
+    }
+    
+
 }
+
+    
