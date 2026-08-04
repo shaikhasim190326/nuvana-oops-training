@@ -19,6 +19,12 @@ public class Student {
 
 
 
+     int totalLecture;
+     int attendedLecture; 
+     int medicalLeaveApproved;
+
+      
+
     public void readDetails(Scanner sc) {
 
         System.out.print("Enter Roll Number : ");
