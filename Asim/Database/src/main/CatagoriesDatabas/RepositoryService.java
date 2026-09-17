@@ -1,8 +1,7 @@
-package Asim.Database.src.CatagoriesDatabas;
+package CatagoriesDatabas;
+
 import java.sql.*;
 import java.util.Scanner;
-
-
 
 interface ProductRepository {
 
@@ -13,22 +12,17 @@ interface ProductRepository {
     void addProduct(String category);
 }
 
-
-
 public class RepositoryService implements ProductRepository {
 
     Scanner sc = new Scanner(System.in);
 
-
-    private String url =
-            "jdbc:mysql://localhost:3306/product_db";
-
-    private String username = "root";
-
-    private String password = "root";
+    // SQLite Database
+    private final String url = "jdbc:sqlite:product.db";
 
 
-    
+    // ==============================
+    // DATABASE CONNECTION
+    // ==============================
 
     private Connection getConnection() {
 
@@ -36,11 +30,7 @@ public class RepositoryService implements ProductRepository {
 
         try {
 
-            con = DriverManager.getConnection(
-                    url,
-                    username,
-                    password
-            );
+            con = DriverManager.getConnection(url);
 
         } catch (SQLException e) {
 
@@ -62,44 +52,41 @@ public class RepositoryService implements ProductRepository {
 
         try {
 
-            Statement st =
-                    con.createStatement();
+            Statement st = con.createStatement();
 
 
             
-
             String categoryTable =
                     "CREATE TABLE IF NOT EXISTS categories (" +
-                    "id INT PRIMARY KEY AUTO_INCREMENT," +
-                    "name VARCHAR(100) UNIQUE NOT NULL)";
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "name TEXT UNIQUE NOT NULL" +
+                    ")";
 
             st.executeUpdate(categoryTable);
 
 
-            
-
+         
             String productTable =
                     "CREATE TABLE IF NOT EXISTS products (" +
-                    "id INT PRIMARY KEY AUTO_INCREMENT," +
-                    "category VARCHAR(100)," +
-                    "product VARCHAR(100)," +
-                    "price DOUBLE," +
-                    "quantity INT)";
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "category TEXT NOT NULL, " +
+                    "product TEXT NOT NULL, " +
+                    "price REAL NOT NULL, " +
+                    "quantity INTEGER NOT NULL" +
+                    ")";
 
             st.executeUpdate(productTable);
 
 
             
-
-            st.executeUpdate(
-                    "INSERT IGNORE INTO categories(name) VALUES " +
+            String insertCategory =
+                    "INSERT OR IGNORE INTO categories(name) VALUES " +
                     "('Electronics')," +
                     "('Clothes')," +
-                    "('Shoes')"
-            );
+                    "('Shoes')";
 
+            st.executeUpdate(insertCategory);
 
-           
 
             addDefaultProducts(con);
 
@@ -108,6 +95,7 @@ public class RepositoryService implements ProductRepository {
                     "Database Connected Successfully"
             );
 
+            st.close();
             con.close();
 
         } catch (SQLException e) {
@@ -121,9 +109,8 @@ public class RepositoryService implements ProductRepository {
 
 
 
-    private void addDefaultProducts(
-            Connection con
-    ) throws SQLException {
+    private void addDefaultProducts(Connection con)
+            throws SQLException {
 
         String sql =
                 "INSERT INTO products " +
@@ -245,8 +232,6 @@ public class RepositoryService implements ProductRepository {
     }
 
 
-    
-
     @Override
     public void showProducts() {
 
@@ -254,28 +239,23 @@ public class RepositoryService implements ProductRepository {
 
         try {
 
-            Statement st =
-                    con.createStatement();
+            Statement st = con.createStatement();
 
             ResultSet rs =
                     st.executeQuery(
-                            "SELECT * FROM products"
+                            "SELECT * FROM products ORDER BY category"
                     );
 
-
             System.out.println(
-                    "\n===== CATEGORIES ====="
+                    "\n===== ALL PRODUCTS ====="
             );
 
-
             String lastCategory = "";
-
 
             while (rs.next()) {
 
                 String category =
                         rs.getString("category");
-
 
                 if (!category.equals(lastCategory)) {
 
@@ -288,7 +268,6 @@ public class RepositoryService implements ProductRepository {
                     lastCategory = category;
                 }
 
-
                 System.out.println(
                         rs.getInt("id")
                                 + ". "
@@ -300,7 +279,8 @@ public class RepositoryService implements ProductRepository {
                 );
             }
 
-
+            rs.close();
+            st.close();
             con.close();
 
         } catch (SQLException e) {
@@ -314,7 +294,6 @@ public class RepositoryService implements ProductRepository {
 
 
     
-
     @Override
     public void addCategory() {
 
@@ -325,36 +304,25 @@ public class RepositoryService implements ProductRepository {
         String category =
                 sc.nextLine();
 
-
-        Connection con =
-                getConnection();
-
+        Connection con = getConnection();
 
         try {
 
             String sql =
-                    "INSERT INTO categories(name) " +
-                    "VALUES (?)";
-
+                    "INSERT INTO categories(name) VALUES (?)";
 
             PreparedStatement ps =
                     con.prepareStatement(sql);
 
-
-            ps.setString(
-                    1,
-                    category
-            );
-
+            ps.setString(1, category);
 
             ps.executeUpdate();
-
 
             System.out.println(
                     "Category Added Successfully"
             );
 
-
+            ps.close();
             con.close();
 
         } catch (SQLException e) {
@@ -370,9 +338,7 @@ public class RepositoryService implements ProductRepository {
     
 
     @Override
-    public void addProduct(
-            String category
-    ) {
+    public void addProduct(String category) {
 
         System.out.print(
                 "Enter Product Name: "
@@ -386,25 +352,49 @@ public class RepositoryService implements ProductRepository {
                 "Enter Price: "
         );
 
-        double price =
-                Double.parseDouble(
-                        sc.nextLine()
-                );
+        double price;
+
+        try {
+
+            price =
+                    Double.parseDouble(
+                            sc.nextLine()
+                    );
+
+        } catch (NumberFormatException e) {
+
+            System.out.println(
+                    "Invalid Price"
+            );
+
+            return;
+        }
 
 
         System.out.print(
                 "Enter Quantity: "
         );
 
-        int quantity =
-                Integer.parseInt(
-                        sc.nextLine()
-                );
+        int quantity;
+
+        try {
+
+            quantity =
+                    Integer.parseInt(
+                            sc.nextLine()
+                    );
+
+        } catch (NumberFormatException e) {
+
+            System.out.println(
+                    "Invalid Quantity"
+            );
+
+            return;
+        }
 
 
-        Connection con =
-                getConnection();
-
+        Connection con = getConnection();
 
         try {
 
@@ -413,40 +403,21 @@ public class RepositoryService implements ProductRepository {
                     "(category, product, price, quantity) " +
                     "VALUES (?, ?, ?, ?)";
 
-
             PreparedStatement ps =
                     con.prepareStatement(sql);
 
-
-            ps.setString(
-                    1,
-                    category
-            );
-
-            ps.setString(
-                    2,
-                    product
-            );
-
-            ps.setDouble(
-                    3,
-                    price
-            );
-
-            ps.setInt(
-                    4,
-                    quantity
-            );
-
+            ps.setString(1, category);
+            ps.setString(2, product);
+            ps.setDouble(3, price);
+            ps.setInt(4, quantity);
 
             ps.executeUpdate();
-
 
             System.out.println(
                     "Product Added Successfully"
             );
 
-
+            ps.close();
             con.close();
 
         } catch (SQLException e) {
@@ -459,30 +430,24 @@ public class RepositoryService implements ProductRepository {
     }
 
 
-    
 
     public void selectCategory() {
 
-        Connection con =
-                getConnection();
-
+        Connection con = getConnection();
 
         try {
 
             Statement st =
                     con.createStatement();
 
-
             ResultSet rs =
                     st.executeQuery(
                             "SELECT * FROM categories"
                     );
 
-
             System.out.println(
                     "\n===== CATEGORIES ====="
             );
-
 
             while (rs.next()) {
 
@@ -493,27 +458,39 @@ public class RepositoryService implements ProductRepository {
                 );
             }
 
-
             System.out.print(
                     "Enter Category ID: "
             );
 
+            int id;
 
-            int id =
-                    Integer.parseInt(
-                            sc.nextLine()
-                    );
+            try {
+
+                id =
+                        Integer.parseInt(
+                                sc.nextLine()
+                        );
+
+            } catch (NumberFormatException e) {
+
+                System.out.println(
+                        "Invalid Category ID"
+                );
+
+                rs.close();
+                st.close();
+                con.close();
+
+                return;
+            }
 
 
             PreparedStatement ps =
                     con.prepareStatement(
-                            "SELECT name FROM categories " +
-                            "WHERE id=?"
+                            "SELECT name FROM categories WHERE id=?"
                     );
 
-
             ps.setInt(1, id);
-
 
             ResultSet result =
                     ps.executeQuery();
@@ -524,57 +501,69 @@ public class RepositoryService implements ProductRepository {
                 String category =
                         result.getString("name");
 
-
-                System.out.println(
-                        "\n===== "
-                                + category.toUpperCase()
-                                + " ====="
-                );
-
-
-                System.out.println(
-                        "1. Show Products"
-                );
-
-                System.out.println(
-                        "2. Add Product"
-                );
-
-                System.out.println(
-                        "3. Back"
-                );
-
-
-                System.out.print(
-                        "Enter choice: "
-                );
-
-
-                int choice =
-                        Integer.parseInt(
-                                sc.nextLine()
-                        );
-
-
-                if (choice == 1) {
-
-                    showCategoryProducts(
-                            category
-                    );
-
-                } else if (choice == 2) {
-
-                    addProduct(category);
-
-                } else if (choice == 3) {
-
-                    return;
-
-                } else {
+                while (true) {
 
                     System.out.println(
-                            "Invalid Choice"
+                            "\n===== "
+                                    + category.toUpperCase()
+                                    + " ====="
                     );
+
+                    System.out.println(
+                            "1. Show Products"
+                    );
+
+                    System.out.println(
+                            "2. Add Product"
+                    );
+
+                    System.out.println(
+                            "3. Back"
+                    );
+
+                    System.out.print(
+                            "Enter choice: "
+                    );
+
+                    int choice;
+
+                    try {
+
+                        choice =
+                                Integer.parseInt(
+                                        sc.nextLine()
+                                );
+
+                    } catch (NumberFormatException e) {
+
+                        System.out.println(
+                                "Invalid Choice"
+                        );
+
+                        continue;
+                    }
+
+
+                    if (choice == 1) {
+
+                        showCategoryProducts(
+                                category
+                        );
+
+                    } else if (choice == 2) {
+
+                        addProduct(category);
+
+                    } else if (choice == 3) {
+
+                        break;
+
+                    } else {
+
+                        System.out.println(
+                                "Invalid Choice"
+                        );
+                    }
                 }
 
             } else {
@@ -585,6 +574,10 @@ public class RepositoryService implements ProductRepository {
             }
 
 
+            result.close();
+            ps.close();
+            rs.close();
+            st.close();
             con.close();
 
         } catch (SQLException e) {
@@ -597,14 +590,12 @@ public class RepositoryService implements ProductRepository {
     }
 
 
-
+    
     private void showCategoryProducts(
             String category
     ) {
 
-        Connection con =
-                getConnection();
-
+        Connection con = getConnection();
 
         try {
 
@@ -614,12 +605,7 @@ public class RepositoryService implements ProductRepository {
                             "WHERE category=?"
                     );
 
-
-            ps.setString(
-                    1,
-                    category
-            );
-
+            ps.setString(1, category);
 
             ResultSet rs =
                     ps.executeQuery();
@@ -646,6 +632,8 @@ public class RepositoryService implements ProductRepository {
             }
 
 
+            rs.close();
+            ps.close();
             con.close();
 
         } catch (SQLException e) {

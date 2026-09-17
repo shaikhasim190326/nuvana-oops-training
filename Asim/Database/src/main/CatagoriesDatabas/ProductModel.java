@@ -1,4 +1,5 @@
-package Asim.Database.src.CatagoriesDatabas;
+
+package CatagoriesDatabas;
 
 public class ProductModel {
 
@@ -7,8 +8,9 @@ public class ProductModel {
     private String product;
     private double price;
     private int quantity;
-    
 
+
+    
     public ProductModel(String category, String product,
                         double price, int quantity) {
 
@@ -18,6 +20,8 @@ public class ProductModel {
         this.quantity = quantity;
     }
 
+
+    
     public int getId() {
         return id;
     }
@@ -37,4 +41,5 @@ public class ProductModel {
     public int getQuantity() {
         return quantity;
     }
+
 }
